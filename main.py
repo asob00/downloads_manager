@@ -1,7 +1,9 @@
 from tkinter import *
+from tkinter import filedialog
 import os
 import sys
 import subprocess
+from shutil import copyfile
 
 
 class MainClass:
@@ -17,7 +19,6 @@ class MainClass:
         self.configure_root(300, 600)
         self.init_filename_label()
         self.init_action_frame()
-        os.rename("/home/adam/Pulpit/2", self.path)
 
     @property
     def file_basename(self):
@@ -40,13 +41,15 @@ class MainClass:
         self.action_frame.grid(row=1, column=0, sticky="nsew")
         self.action_frame.grid_columnconfigure(0, weight=1)
         open_button = Button(self.action_frame, text="Open file", font="bold", command=self.open_file)
-        move_button = Button(self.action_frame, text="Move file", font="bold")
-        do_nothing_button = Button(self.action_frame, text="Do nothing", font="bold")
+        copy_button = Button(self.action_frame, text="Copy file", font="bold", command=self.copy_file)
+        move_button = Button(self.action_frame, text="Move file", font="bold", command=self.move_file)
+        do_nothing_button = Button(self.action_frame, text="Do nothing and quit", font="bold", command=self.close_window)
         open_button.grid(row=0, column=0, sticky="nsew")
         self.rename_canvas.grid(row=1, column=0, sticky="nsew")
         self.rename_button.pack(fill=X)
-        move_button.grid(row=2, column=0, sticky="nsew")
-        do_nothing_button.grid(row=3, column=0, sticky="nsew")
+        copy_button.grid(row=2, column=0, sticky="nsew")
+        move_button.grid(row=3, column=0, sticky="nsew")
+        do_nothing_button.grid(row=4, column=0, sticky="nsew")
 
     def open_file(self):
         if sys.platform == 'win32':
@@ -72,6 +75,22 @@ class MainClass:
         self.rename_canvas.winfo_children()[0].destroy()
         self.rename_button = Button(self.rename_canvas, text="Rename file", font="bold", command=self.rename_file)
         self.rename_button.pack(fill=X)
+
+    def move_file(self):
+        new_path = filedialog.askdirectory(initialdir=".",
+                                              title="Select destination directory:")
+        new_path = new_path + f"/{self.file_basename}"
+        os.rename(self.path, new_path)
+        self.path = new_path
+
+    def copy_file(self):
+        new_path = filedialog.askdirectory(initialdir=".",
+                                           title="Select destination directory:")
+        new_path = new_path + f"/{self.file_basename}"
+        copyfile(self.path, new_path)
+
+    def close_window(self):
+        self.root.destroy()
 
 
 root = MainClass("/home/adam/Pulpit/1.txt")
