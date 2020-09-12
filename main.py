@@ -1,4 +1,4 @@
-from tkinter import *
+from tkinter import Canvas, LabelFrame, Label, Button, Entry, Tk, X, BOTH
 from tkinter import filedialog
 import os
 import sys
@@ -29,6 +29,7 @@ class MainClass:
         self.root.configure(bg=bg_color)
         self.root.title("Downloads manager")
         self.root.minsize(width, height)
+        self.root.geometry(f"{width}x{height}+500+200")
 
     def init_filename_label(self):
         self.filename_label.grid(row=0, column=0, sticky="nsew")
@@ -43,7 +44,7 @@ class MainClass:
         open_button = Button(self.action_frame, text="Open file", font="bold", command=self.open_file)
         copy_button = Button(self.action_frame, text="Copy file", font="bold", command=self.copy_file)
         move_button = Button(self.action_frame, text="Move file", font="bold", command=self.move_file)
-        do_nothing_button = Button(self.action_frame, text="Do nothing and quit", font="bold", command=self.close_window)
+        do_nothing_button = Button(self.action_frame, text="Quit", font="bold", command=self.close_window)
         open_button.grid(row=0, column=0, sticky="nsew")
         self.rename_canvas.grid(row=1, column=0, sticky="nsew")
         self.rename_button.pack(fill=X)
@@ -79,15 +80,17 @@ class MainClass:
     def move_file(self):
         new_path = filedialog.askdirectory(initialdir=".",
                                               title="Select destination directory:")
-        new_path = new_path + f"/{self.file_basename}"
-        os.rename(self.path, new_path)
-        self.path = new_path
+        if new_path:
+            new_path = new_path + f"/{self.file_basename}"
+            os.rename(self.path, new_path)
+            self.path = new_path
 
     def copy_file(self):
         new_path = filedialog.askdirectory(initialdir=".",
                                            title="Select destination directory:")
-        new_path = new_path + f"/{self.file_basename}"
-        copyfile(self.path, new_path)
+        if new_path:
+            new_path = new_path + f"/{self.file_basename}"
+            copyfile(self.path, new_path)
 
     def close_window(self):
         self.root.destroy()
