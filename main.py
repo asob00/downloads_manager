@@ -1,4 +1,4 @@
-from tkinter import Canvas, LabelFrame, Label, Button, Entry, Tk, X, BOTH
+from tkinter import *
 from tkinter import filedialog
 import os
 import sys
