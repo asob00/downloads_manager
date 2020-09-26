@@ -4,14 +4,15 @@ import os
 import sys
 import subprocess
 from shutil import copyfile
+from PIL import Image, ExifTags
 
 
-class MainClass:
+class MainWindow:
 
     def __init__(self, path):
         self.path = path
         self.root = Tk()
-        self.filename_label = LabelFrame(self.root, text="File:")
+        self.filename_label_frame = LabelFrame(self.root, text="File:")
         self.action_frame = LabelFrame(self.root, text="Action:")
         self.rename_entry = None
         self.rename_canvas = Canvas(self.action_frame)
@@ -32,9 +33,9 @@ class MainClass:
         self.root.geometry(f"{width}x{height}+500+200")
 
     def init_filename_label(self):
-        self.filename_label.grid(row=0, column=0, sticky="nsew")
-        file_name_label = Label(self.filename_label, text=f"Name: {self.file_basename}", font="bold")
-        file_path_label = Label(self.filename_label, text=f"Path: {self.path}", font="bold")
+        self.filename_label_frame.grid(row=0, column=0, sticky="nsew")
+        file_name_label = Label(self.filename_label_frame, text=f"Name: {self.file_basename}", font="bold")
+        file_path_label = Label(self.filename_label_frame, text=f"Path: {self.path}", font="bold")
         file_name_label.pack(anchor="w")
         file_path_label.pack(anchor="w")
 
@@ -65,9 +66,9 @@ class MainClass:
             button.destroy()
         self.rename_entry = Entry(self.rename_canvas)
         self.rename_entry.pack(fill=BOTH)
-        self.rename_entry.bind('<Return>', self.set_new_name)
+        self.rename_entry.bind('<Return>', lambda x: self.set_new_name())
 
-    def set_new_name(self, new_name):
+    def set_new_name(self):
         filepath = os.path.dirname(self.path)
         new_name = self.rename_entry.get()
         new_path = filepath + "/" + new_name
@@ -96,5 +97,36 @@ class MainClass:
         self.root.destroy()
 
 
-root = MainClass("/home/adam/Pulpit/1.txt")
+class ImageFile(MainWindow):
+    def __init__(self, path):
+        self.metadata = {}
+        self.path = path
+        self.get_metadata()
+        super().__init__(path)
+
+    def get_metadata(self):
+        image = Image.open(self.path)
+        exif = image.getexif()
+        print(ExifTags.TAGS)
+        if exif:
+            for tag, value in exif.items():
+                if tag in ExifTags.TAGS:
+                    self.metadata[ExifTags.TAGS[tag]] = value
+
+    def init_filename_label(self):
+        super().init_filename_label()
+        if 'ExifImageWidth' in self.metadata.keys() \
+                and 'ExifImageHeight' in self.metadata.keys():
+            size = f"{self.metadata['ExifImageWidth']}x" \
+                   f"{self.metadata['ExifImageHeight']}"
+        else:
+            size = 'unknown'
+        size_label = Label(self.filename_label_frame,
+                           text=f"Size: {size}",
+                           font="bold")
+        size_label.pack(anchor="w")
+
+
+root = ImageFile("/home/adam/Pulpit/1.jpg")
 root.root.mainloop()
+
