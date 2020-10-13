@@ -1,7 +1,7 @@
-import MainWindow as main
-import ImageFile as image
-import ArchiveFile as archive
+from MainWindow import MainWindow
+from ImageFile import ImageFile
+from ArchiveFile import ArchiveFile
+import sys
 
-
-root = image.ImageFile("/home/adam/Pulpit/20-21-cs1-sem3.jpg")
+root = ImageFile(sys.argv[1])
 root.root.mainloop()

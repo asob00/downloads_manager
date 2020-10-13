@@ -1,7 +1,7 @@
 from tkinter import *
 from PIL import Image, ExifTags
 import webbrowser
-import MainWindow
+from MainWindow import MainWindow
 
 
 class ImageFile(MainWindow):

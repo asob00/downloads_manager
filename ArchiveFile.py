@@ -2,7 +2,7 @@ from tkinter import *
 from tkinter import filedialog
 import sys
 import shutil
-import MainWindow
+from MainWindow import MainWindow
 
 
 class ArchiveFile(MainWindow):
